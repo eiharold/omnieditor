@@ -158,9 +158,26 @@ function renderBreadcrumbs(elm) {
 // ============================================================
 const DEVICE_WIDTHS = { desktop: null, laptop: 1280, tablet: 768, mobile: 375 };
 
+// No modo de visualização, a view que corresponde ao aparelho onde o editor
+// está aberto ocupa a tela toda: a moldura existe para delimitar um tamanho
+// diferente do real, e aqui o tamanho JÁ é o real. As outras views continuam
+// com moldura e cantos arredondados, que é o que dá a noção do recorte.
+const isNativeView = () => state.device === (isTouch ? 'mobile' : 'desktop');
+
 function applyDevice() {
   const frame = $('#deviceFrame');
   const scroll = $('#canvasScroll');
+
+  const fullBleed = state.previewMode && isNativeView();
+  document.body.classList.toggle('preview-full', fullBleed);
+  if (fullBleed) {
+    frame.style.width = frame.style.flexBasis = '100%';
+    frame.style.height = '100%';
+    frame.style.transform = '';
+    setTimeout(() => canvas.refreshBoxes?.(), 260);
+    return;
+  }
+
   let w = state.device === 'custom' ? state.customWidth : DEVICE_WIDTHS[state.device];
   // em telas de toque, "desktop" ganha largura fixa para poder ser visto reduzido
   if (isTouch && state.device === 'desktop') w = 1440;

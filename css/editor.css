@@ -521,6 +521,13 @@ body.no-right .sidebar.right { display: none; }
 }
 #canvasFrame { width: 100%; height: 100%; border: none; display: block; background: #fff; }
 
+/* modo de visualização na view nativa do aparelho: página de ponta a ponta,
+   só com a barra do topo (ver isNativeView em app.js) */
+body.preview-full .canvas-scroll { padding: 0; }
+body.preview-full .canvas-area { background-image: none; }
+body.preview-full .device-frame { border-radius: 0; box-shadow: none; }
+body.preview-full .breadcrumbs { display: none; }
+
 .breadcrumbs {
   height: 32px; flex: none;
   display: flex; align-items: center; gap: 2px;

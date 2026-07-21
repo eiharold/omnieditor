@@ -128,7 +128,10 @@ Botão direito em qualquer elemento do canvas: editar texto, copiar/recortar/col
 - **CSS personalizado**: painel global com aplicação em tempo real, salvo dentro da página (`<style data-omni-custom>`)
 - **Modo de visualização** (`⌘P`, ícone do olho): oculta os painéis laterais **e** desliga os
   marcadores de edição — a página fica como para o visitante, com links e interações ativos
-  (a barra do topo continua ali para você sair)
+  (a barra do topo continua ali para você sair). Na view que corresponde ao aparelho onde o
+  editor está aberto — **desktop** no computador, **mobile** no celular — a página ocupa a
+  tela inteira, sem moldura nem cantos arredondados, porque ali o tamanho já é o real. Nas
+  outras views a moldura fica, que é o que delimita o recorte.
 - **Histórico de edições**: versões gravadas ao abrir, salvar e exportar (IndexedDB do navegador, máx. 30 por arquivo) — restaure, baixe ou exclua pelo painel do relógio
 - **Temas**: claro/escuro + 7 cores de destaque (roxo padrão)
 

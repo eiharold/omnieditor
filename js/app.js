@@ -9,6 +9,7 @@ import { initInspector, renderInspector, renderPageSettings } from './inspector.
 import { BLANK_PAGE, DEMO_PAGE } from './demo.js';
 import * as versions from './versions.js';
 import { initSelectors, refreshSelectors } from './selectors.js';
+import { initDesign, renderStylesTab } from './design.js';
 import { t, getLang, setLang, LANGS, applyStaticI18n, onLangChange } from './i18n.js';
 import * as session from './session.js';
 
@@ -473,23 +474,18 @@ function updateDirtyUI() {
 }
 
 // ============================================================
-// Preview mode
+// Modo de visualização: oculta os painéis laterais E desliga os marcadores
+// de edição, deixando a página se comportar como para o visitante.
 // ============================================================
 function togglePreview() {
   state.previewMode = !state.previewMode;
   $('#btnPreview').classList.toggle('active', state.previewMode);
+  document.body.classList.toggle('zen', state.previewMode);
   if (state.previewMode) {
     canvas.deselect();
+    closeDrawers();   // no mobile os painéis são gavetas
     toast(t('Modo visualização — links e interações ativos'), 'info', 2200);
   }
-}
-
-// ============================================================
-// Modo foco (oculta os painéis laterais)
-// ============================================================
-function toggleZen() {
-  document.body.classList.toggle('zen');
-  $('#btnZen').classList.toggle('active', document.body.classList.contains('zen'));
   applyDevice();
 }
 
@@ -688,6 +684,7 @@ function openDocTab(tab) {
   $$('.doc-tab').forEach(b => b.classList.toggle('active', b.dataset.dtab === tab));
   $$('.doc-panel').forEach(p => p.classList.toggle('active', p.dataset.dpanel === tab));
   if (tab === 'general') renderPageSettings($('#docGeneral'));
+  if (tab === 'styles') renderStylesTab($('#docStyles'));
 }
 
 function openDocPanel(tab = 'general') {
@@ -878,7 +875,11 @@ function relocalize() {
   renderInspector(canvas.getSelected());
   refreshLayers();
   refreshSelectors();
-  if (!$('#docDrawer').hidden && $('.doc-tab.active')?.dataset.dtab === 'general') renderPageSettings($('#docGeneral'));
+  if (!$('#docDrawer').hidden) {
+    const dtab = $('.doc-tab.active')?.dataset.dtab;
+    if (dtab === 'general') renderPageSettings($('#docGeneral'));
+    if (dtab === 'styles') renderStylesTab($('#docStyles'));
+  }
   $('#langSelect').value = getLang();
 }
 
@@ -927,7 +928,6 @@ function handleShortcut(e) {
 
   if (mod && e.key.toLowerCase() === 's') { e.preventDefault(); saveFile(); return; }
   if (mod && e.key.toLowerCase() === 'p') { e.preventDefault(); togglePreview(); return; }
-  if (mod && e.key === '.') { e.preventDefault(); toggleZen(); return; }
   if (mod && e.key.toLowerCase() === 'z') {
     if (inInput) return;
     e.preventDefault();
@@ -998,6 +998,13 @@ function init() {
       updateDirtyUI();
     },
   });
+  initDesign({
+    onChanged: () => {
+      $('#customCssArea').value = canvas.getCustomCss();
+      updateDirtyUI();
+      refreshSelectors();
+    },
+  });
 
   const domChanged = debounce(() => {
     refreshLayers();
@@ -1053,7 +1060,6 @@ function init() {
   $('#miSaveAs').addEventListener('click', () => { hideSaveMenu(); saveFileAs(); });
   $('#btnInspector').addEventListener('click', toggleInspector);
   $('#btnPreview').addEventListener('click', togglePreview);
-  $('#btnZen').addEventListener('click', toggleZen);
   $('#btnHistory').addEventListener('click', openHistoryModal);
   $('#btnCloseHistory').addEventListener('click', () => { $('#historyModal').hidden = true; });
   $('#btnUndo').addEventListener('click', undo);

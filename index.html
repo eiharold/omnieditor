@@ -75,16 +75,13 @@
     <button class="icon-btn" id="btnPreview" data-i18n-title="Modo de visualização — interagir com a página" data-kbd="⌘P" title="Modo de visualização (⌘P)">
       <svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
     </button>
-    <button class="icon-btn desktop-only" id="btnZen" data-i18n-title="Ocultar/mostrar painéis laterais" data-kbd="⌘." title="Modo foco (⌘.)">
-      <svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-    </button>
     <button class="icon-btn" id="btnHistory" data-i18n-title="Histórico de edições" title="Histórico de edições">
       <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 3"/></svg>
     </button>
-    <button class="icon-btn" id="btnCss" data-i18n-title="CSS personalizado" title="CSS personalizado">
+    <button class="icon-btn" id="btnCss" data-i18n-title="Ajustes da página" title="Ajustes da página">
       <svg viewBox="0 0 24 24"><path d="m8 6-6 6 6 6M16 6l6 6-6 6"/></svg>
     </button>
-    <button class="icon-btn" id="btnSettings" data-i18n-title="Tema e aparência" title="Tema e aparência">
+    <button class="icon-btn" id="btnSettings" data-i18n-title="Configurações" title="Configurações">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
     </button>
     <button class="icon-btn narrow-only" id="btnInspector" data-i18n-title="Abrir/fechar painel de edição" title="Abrir/fechar painel de edição">
@@ -215,11 +212,13 @@
   </div>
   <div class="doc-tabs">
     <button class="doc-tab active" data-dtab="general" data-i18n="Geral">Geral</button>
+    <button class="doc-tab" data-dtab="styles" data-i18n="Estilos">Estilos</button>
     <button class="doc-tab" data-dtab="css">CSS</button>
     <button class="doc-tab" data-dtab="js">JS</button>
   </div>
   <div class="doc-body">
     <div class="doc-panel active" data-dpanel="general" id="docGeneral"></div>
+    <div class="doc-panel" data-dpanel="styles" id="docStyles"></div>
     <div class="doc-panel" data-dpanel="css">
       <p class="doc-hint" data-i18n="CSS aplicado em tempo real e salvo dentro da página.">CSS aplicado em tempo real e salvo dentro da página.</p>
       <textarea id="customCssArea" class="doc-code" spellcheck="false" placeholder="/* Ex.:

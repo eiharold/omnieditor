@@ -372,6 +372,56 @@ body.no-right .sidebar.right { display: none; }
 }
 .doc-code:focus { border-color: var(--accent); }
 #userJsHead { min-height: 90px; flex: 0 0 auto; }
+
+/* ---- aba Estilos (design system da página) ---- */
+#docStyles { display: none; overflow-y: auto; }
+#docStyles.active { display: block; }
+.ds-section { margin-bottom: 20px; }
+.ds-title {
+  display: flex; align-items: center; gap: 7px; margin: 0 0 10px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--text-2);
+}
+.ds-count {
+  font-size: 10px; font-weight: 600; letter-spacing: 0;
+  padding: 1px 6px; border-radius: 20px;
+  background: var(--bg-3); color: var(--text-3);
+}
+.ds-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 8px; }
+.ds-card {
+  display: flex; align-items: center; gap: 9px; padding: 7px;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--bg-2); min-width: 0;
+}
+/* xadrez atrás da amostra: deixa a transparência visível */
+.ds-swatch {
+  position: relative; flex: none; width: 30px; height: 30px; padding: 0;
+  border: 1px solid var(--border); border-radius: 7px; cursor: pointer;
+  background: var(--c);
+}
+.ds-swatch.has-alpha {
+  background:
+    linear-gradient(var(--c), var(--c)),
+    repeating-conic-gradient(var(--text-3) 0 25%, transparent 0 50%) 0 0 / 10px 10px;
+}
+.ds-swatch:hover { border-color: var(--accent); }
+.ds-picker { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+.ds-info { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.ds-value {
+  font-family: var(--mono); font-size: 11px; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ds-uses { font-size: 10.5px; color: var(--text-3); }
+.ds-font {
+  display: flex; align-items: center; gap: 11px; padding: 9px 10px; margin-bottom: 7px;
+  border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-2);
+}
+.ds-font-preview {
+  flex: none; width: 34px; text-align: center;
+  font-size: 20px; line-height: 1.2; color: var(--text);
+}
+.ds-font-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.ds-font-input { width: 100%; box-sizing: border-box; font-family: var(--mono); font-size: 11px; }
 #userJsBody { min-height: 120px; }
 
 /* ---- Barra de texto rico ---- */

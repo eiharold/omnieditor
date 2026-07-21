@@ -85,7 +85,7 @@ export function parseCss(text) {
 // ============================================================
 // Fontes de CSS (arquivos externos, <style> da página, CSS personalizado)
 // ============================================================
-function getSources() {
+export function getSources() {
   const doc = canvas.getDoc();
   if (!doc) return [];
   const sources = [];
@@ -107,7 +107,7 @@ function getSources() {
 
 const getSourceById = id => getSources().find(s => s.id === id) || null;
 
-async function applySourceText(source, newText) {
+export async function applySourceText(source, newText) {
   if (source.kind === 'file') {
     await canvas.updateCssFile(source.path, newText);
   } else if (source.kind === 'style') {

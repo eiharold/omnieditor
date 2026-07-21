@@ -892,6 +892,22 @@ export function restoreSnapshot(snap) {
   cb.onDomChanged?.();
 }
 
+// HTML para RENDERIZAR (exportar como imagem/PDF), não para salvar: tira a
+// interface do editor mas mantém os blob: já resolvidos, senão os assets
+// relativos não carregariam fora da pasta do projeto.
+export function getRenderHTML() {
+  if (!doc) return '';
+  const root = doc.documentElement.cloneNode(true);
+  root.querySelectorAll('[data-omni-editor], .__omni-overlay').forEach(n => n.remove());
+  root.querySelectorAll('*').forEach(n => {
+    n.removeAttribute('contenteditable');
+    for (const a of [...n.attributes]) {
+      if (a.name.startsWith('data-omni-orig-')) n.removeAttribute(a.name);
+    }
+  });
+  return '<!DOCTYPE html>' + root.outerHTML;
+}
+
 // ============================================================
 // Serialização (para salvar/exportar)
 // ============================================================

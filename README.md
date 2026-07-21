@@ -87,6 +87,19 @@ Lista todas as regras de todos os stylesheets da página — `<style>` internos,
 - "+ Nova regra" cria um seletor novo no CSS personalizado
 - Na aba **Avançado** de um elemento, o `#id` e as `.classes` aparecem como chips clicáveis: clique para abrir a regra correspondente direto na aba CSS (se não existir, o editor oferece criá-la no CSS personalizado)
 
+## Exportar
+
+No menu da seta ao lado de **Salvar**, o item **Exportar** abre um modal com três formatos:
+
+- **PNG** — imagem da página inteira (do topo ao rodapé, não só a parte visível);
+- **PDF** — uma única página do tamanho exato da captura, sem cortes em A4;
+- **Copiar** — o HTML completo da página para a área de transferência.
+
+Para PNG e PDF você escolhe a **largura** (Desktop 1440, Laptop 1280, Tablet 768, Mobile 375);
+ele já vem na largura do dispositivo que você está editando. A página é rasterizada num iframe
+invisível nessa largura — e não no canvas do editor — para o resultado não depender do zoom nem
+da altura da janela. Páginas acima de 12000px são cortadas, com aviso (limite do `<canvas>`).
+
 ## Imagens
 
 O campo **src** (e o de **imagem de fundo**) aplica só ao pressionar Enter ou sair do campo (a imagem não quebra enquanto você digita). Com a pasta do projeto aberta, caminhos relativos são resolvidos na hora para o preview e restaurados ao caminho original ao salvar. O botão **Escolher…** abre o Finder: arquivos dentro da pasta do projeto são vinculados pelo caminho relativo automaticamente; arquivos de fora são incorporados na página (data URL). Imagens sem src aparecem como um placeholder quadriculado clicável no editor.
@@ -185,6 +198,7 @@ js/
   layers.js         árvore de camadas
   selectors.js      painel de seletores CSS (parser + editor de regras)
   design.js         aba Estilos: detecta cores/fontes e troca globalmente
+  export.js         exportar em PNG/PDF ou copiar o HTML
   versions.js       histórico de edições (IndexedDB)
   widgets.js        paleta de elementos
   state.js          estado, histórico, preferências

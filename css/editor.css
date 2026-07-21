@@ -484,6 +484,37 @@ body.no-right .sidebar.right { display: none; }
 .prompt-label { display: block; font-size: 12px; color: var(--text-2); margin-bottom: 6px; }
 .prompt-modal .modal-actions { gap: 8px; }
 
+/* ---- Exportar ---- */
+.export-modal { width: 470px; max-width: 92vw; }
+.export-modal h3 { margin: 0 0 16px; }
+.export-label {
+  display: block; font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--text-2); margin: 0 0 8px;
+}
+.export-opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
+.export-opts.sizes { grid-template-columns: repeat(4, 1fr); }
+.export-opt {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 12px 8px; min-width: 0;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--bg-2); color: var(--text-2);
+  font-family: var(--font); cursor: pointer; text-align: center;
+  transition: border-color .15s ease, background .15s ease;
+}
+.export-opt:hover { border-color: var(--accent); }
+.export-opt.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.export-opt svg {
+  width: 20px; height: 20px; fill: none; stroke: currentColor;
+  stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+}
+.export-opt b { font-size: 12.5px; font-weight: 600; }
+.export-opt small { font-size: 10px; color: var(--text-3); line-height: 1.35; }
+.export-opt.active small { color: inherit; opacity: .8; }
+.export-status {
+  margin: 0 0 4px; font-size: 12px; color: var(--text-2);
+  display: flex; align-items: center; gap: 8px;
+}
+
 /* ---- Assinatura ---- */
 .made-by {
   margin: 18px 0 0; padding-top: 12px;

@@ -10,6 +10,7 @@ import { BLANK_PAGE, DEMO_PAGE } from './demo.js';
 import * as versions from './versions.js';
 import { initSelectors, refreshSelectors } from './selectors.js';
 import { initDesign, renderStylesTab } from './design.js';
+import { initExport, openExport } from './export.js';
 import { t, getLang, setLang, LANGS, applyStaticI18n, onLangChange } from './i18n.js';
 import * as session from './session.js';
 
@@ -1069,6 +1070,7 @@ function init() {
       updateDirtyUI();
     },
   });
+  initExport();
   initDesign({
     onChanged: () => {
       $('#customCssArea').value = canvas.getCustomCss();
@@ -1128,6 +1130,7 @@ function init() {
   $('#btnSave').addEventListener('click', saveFile);
   $('#btnSaveMenu').addEventListener('click', e => { e.stopPropagation(); toggleSaveMenu(); });
   $('#miOpen').addEventListener('click', () => { hideSaveMenu(); showWelcome(); });
+  $('#miExport').addEventListener('click', () => { hideSaveMenu(); openExport(); });
   $('#miSave').addEventListener('click', () => { hideSaveMenu(); saveFile(); });
   $('#miSaveAs').addEventListener('click', () => { hideSaveMenu(); saveFileAs(); });
   $('#btnInspector').addEventListener('click', toggleInspector);

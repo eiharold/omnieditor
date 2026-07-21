@@ -105,6 +105,7 @@
 <!-- menu do botão Salvar -->
 <div class="dropdown-menu" id="saveMenu" hidden>
   <button class="dd-item" id="miOpen"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg><span data-i18n="Abrir">Abrir</span></button>
+  <button class="dd-item" id="miExport"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg><span data-i18n="Exportar">Exportar</span></button>
   <button class="dd-item" id="miSave"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg><span data-i18n="Salvar">Salvar</span></button>
   <button class="dd-item" id="miSaveAs"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M12 11v6M9 14h6"/></svg><span data-i18n="Salvar como">Salvar como</span></button>
 </div>
@@ -356,6 +357,46 @@
 </div>
 
 <!-- ======== SOBRE ======== -->
+<!-- ======== EXPORTAR ======== -->
+<div class="modal-backdrop" id="exportModal" hidden>
+  <div class="modal export-modal">
+    <h3 data-i18n="Exportar página">Exportar página</h3>
+
+    <label class="export-label" data-i18n="Formato">Formato</label>
+    <div class="export-opts" id="exportFormats">
+      <button class="export-opt active" data-fmt="png">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        <b>PNG</b><small data-i18n="Imagem da página inteira">Imagem da página inteira</small>
+      </button>
+      <button class="export-opt" data-fmt="pdf">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
+        <b>PDF</b><small data-i18n="Documento de uma página">Documento de uma página</small>
+      </button>
+      <button class="export-opt" data-fmt="clipboard">
+        <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <b data-i18n="Copiar">Copiar</b><small data-i18n="HTML completo para a área de transferência">HTML completo para a área de transferência</small>
+      </button>
+    </div>
+
+    <div id="exportSizeRow">
+      <label class="export-label" data-i18n="Largura da página">Largura da página</label>
+      <div class="export-opts sizes" id="exportSizes">
+        <button class="export-opt" data-w="1440"><b data-i18n="Desktop">Desktop</b><small>1440px</small></button>
+        <button class="export-opt" data-w="1280"><b data-i18n="Laptop">Laptop</b><small>1280px</small></button>
+        <button class="export-opt" data-w="768"><b data-i18n="Tablet">Tablet</b><small>768px</small></button>
+        <button class="export-opt" data-w="375"><b data-i18n="Mobile">Mobile</b><small>375px</small></button>
+      </div>
+    </div>
+
+    <p class="export-status" id="exportStatus" hidden></p>
+
+    <div class="modal-actions">
+      <button class="btn ghost" id="btnCancelExport" data-i18n="Cancelar">Cancelar</button>
+      <button class="btn primary" id="btnDoExport" data-i18n="Exportar">Exportar</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-backdrop" id="aboutModal" hidden>
   <div class="modal about-modal">
     <div class="about-head">

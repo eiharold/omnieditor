@@ -5,6 +5,7 @@ import { $, el, debounce, toast, escHTML } from './utils.js';
 import { state, checkpoint, markDirty } from './state.js';
 import * as canvas from './canvas.js';
 import { t } from './i18n.js';
+import { askConfirm, askPrompt } from './dialogs.js';
 
 let listRoot, searchInput;
 let drawer, ruleSelectorEl, ruleMetaEl, ruleControlsEl, ruleCodeEl;
@@ -279,7 +280,11 @@ async function applyBlock(block) {
 
 async function deleteCurrentRule() {
   if (!current) return;
-  if (!confirm(t('Excluir a regra "{0}"?', current.selector))) return;
+  if (!await askConfirm({
+    title: t('Excluir a regra "{0}"?', current.selector),
+    message: t('A regra some do CSS onde está gravada. Dá para desfazer com ⌘Z.'),
+    confirmLabel: t('Excluir'), danger: true,
+  })) return;
   const source = getSourceById(current.sourceId);
   const rule = findRule(source);
   if (!rule) return;
@@ -459,9 +464,13 @@ export function createRule(selector) {
   toast(t('Regra {0} criada no CSS personalizado', selector), 'ok');
 }
 
-function newRule() {
+async function newRule() {
   if (!canvas.getDoc()) return toast(t('Abra uma página primeiro'), 'info');
-  const sel = prompt(t('Seletor da nova regra (ex.: .minha-classe, #meu-id):'));
+  const sel = await askPrompt({
+    title: t('Nova regra CSS'),
+    label: t('Seletor da nova regra (ex.: .minha-classe, #meu-id):'),
+    placeholder: '.minha-classe',
+  });
   if (!sel || !sel.trim()) return;
   createRule(sel.trim());
 }

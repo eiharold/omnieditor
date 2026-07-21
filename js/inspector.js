@@ -6,6 +6,7 @@ import * as canvas from './canvas.js';
 import { ANIM_PRESETS, EASES, getAnim, setAnim, defaultAnim, playAnimation, playAll } from './animations.js';
 import { jumpToSelector, createRule } from './selectors.js';
 import { t } from './i18n.js';
+import { askConfirm } from './dialogs.js';
 
 let stylePanel, animPanel, advancedPanel, emptyEl;
 let currentEl = null;
@@ -1144,10 +1145,13 @@ function renderAdvancedTab(elm) {
         text: tok,
         title: t('Editar a regra {0} na aba CSS', tok),
       });
-      chip.addEventListener('click', () => {
-        if (!jumpToSelector(tok)) {
-          if (confirm(t('Nenhuma regra encontrada para "{0}". Criar no CSS personalizado?', tok))) createRule(tok);
-        }
+      chip.addEventListener('click', async () => {
+        if (jumpToSelector(tok)) return;
+        const criar = await askConfirm({
+          title: t('Nenhuma regra encontrada para "{0}". Criar no CSS personalizado?', tok),
+          confirmLabel: t('Criar regra'),
+        });
+        if (criar) createRule(tok);
       });
       chipsWrap.appendChild(chip);
     }

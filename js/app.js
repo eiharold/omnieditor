@@ -11,6 +11,7 @@ import * as versions from './versions.js';
 import { initSelectors, refreshSelectors } from './selectors.js';
 import { initDesign, renderStylesTab } from './design.js';
 import { initExport, openExport } from './export.js';
+import { askPrompt, askConfirm } from './dialogs.js';
 import { t, getLang, setLang, LANGS, applyStaticI18n, onLangChange } from './i18n.js';
 import * as session from './session.js';
 
@@ -401,7 +402,11 @@ function toggleFileMenu() {
     item.addEventListener('click', async () => {
       menu.hidden = true;
       if (f.path !== state.filePath) {
-        if (state.dirty && !confirm(t('Descartar alterações não salvas e abrir outro arquivo?'))) return;
+        if (state.dirty && !await askConfirm({
+          title: t('Descartar alterações não salvas e abrir outro arquivo?'),
+          message: t('As alterações feitas em {0} serão perdidas.', state.fileName || t('página atual')),
+          confirmLabel: t('Descartar e abrir'), danger: true,
+        })) return;
         await openFileEntry(f);
       }
     });
@@ -663,7 +668,11 @@ async function openHistoryModal() {
       class: 'icon-btn', title: t('Restaurar esta versão'),
       html: '<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>',
       onclick: async () => {
-        if (state.dirty && !confirm(t('Substituir as alterações atuais pela versão selecionada?'))) return;
+        if (state.dirty && !await askConfirm({
+          title: t('Substituir as alterações atuais pela versão selecionada?'),
+          message: t('As alterações não salvas serão perdidas.'),
+          confirmLabel: t('Restaurar'), danger: true,
+        })) return;
         modal.hidden = true;
         await loadDocument(v.html, { versionLabel: 'Restauração' });
         markDirty(true);
@@ -818,39 +827,6 @@ function showRteToolbar(elm, rect) {
 function hideRteToolbar() { $('#rteToolbar').hidden = true; }
 
 // Modal de entrada no estilo do app (substitui o prompt do navegador)
-function askPrompt({ title, label = '', value = '', placeholder = '' }) {
-  return new Promise(resolve => {
-    const modal = $('#promptModal'), input = $('#promptInput');
-    $('#promptTitle').textContent = title;
-    $('#promptLabel').textContent = label;
-    $('#promptLabel').style.display = label ? '' : 'none';
-    input.value = value;
-    input.placeholder = placeholder;
-    modal.hidden = false;
-    setTimeout(() => { input.focus(); input.select(); }, 30);
-
-    const finish = val => {
-      modal.hidden = true;
-      $('#promptOk').removeEventListener('click', onOk);
-      $('#promptCancel').removeEventListener('click', onCancel);
-      input.removeEventListener('keydown', onKey);
-      modal.removeEventListener('mousedown', onBackdrop);
-      resolve(val);
-    };
-    const onOk = () => finish(input.value.trim());
-    const onCancel = () => finish(null);
-    const onKey = e => {
-      if (e.key === 'Enter') { e.preventDefault(); onOk(); }
-      else if (e.key === 'Escape') { e.preventDefault(); onCancel(); }
-    };
-    const onBackdrop = e => { if (e.target === modal) onCancel(); };
-
-    $('#promptOk').addEventListener('click', onOk);
-    $('#promptCancel').addEventListener('click', onCancel);
-    input.addEventListener('keydown', onKey);
-    modal.addEventListener('mousedown', onBackdrop);
-  });
-}
 
 function initRte() {
   $$('#rteToolbar button').forEach(btn => {

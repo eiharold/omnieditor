@@ -343,6 +343,18 @@
   </div>
 </div>
 
+<!-- ======== CONFIRMAÇÃO (no lugar do confirm() do navegador) ======== -->
+<div class="modal-backdrop" id="confirmModal" hidden>
+  <div class="modal confirm-modal">
+    <h3 id="confirmTitle"></h3>
+    <p class="confirm-message" id="confirmMessage" hidden></p>
+    <div class="modal-actions">
+      <button class="btn ghost" id="confirmCancel" data-i18n="Cancelar">Cancelar</button>
+      <button class="btn primary" id="confirmOk" data-i18n="Confirmar">Confirmar</button>
+    </div>
+  </div>
+</div>
+
 <!-- barra flutuante de texto rico -->
 <div class="rte-toolbar" id="rteToolbar" hidden>
   <button data-rte="bold" data-i18n-title="Negrito" data-kbd="⌘B" title="Negrito"><b>B</b></button>
@@ -374,7 +386,7 @@
       </button>
       <button class="export-opt" data-fmt="clipboard">
         <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        <b data-i18n="Copiar">Copiar</b><small data-i18n="HTML completo para a área de transferência">HTML completo para a área de transferência</small>
+        <b data-i18n="Copiar">Copiar</b><small data-i18n="Copiar HTML para a área de transferência">Copiar HTML para a área de transferência</small>
       </button>
     </div>
 

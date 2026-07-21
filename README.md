@@ -120,6 +120,30 @@ Botão direito em qualquer elemento do canvas: editar texto, copiar/recortar/col
 | `Esc` | Desselecionar / sair da edição de texto |
 | Duplo clique | Editar texto do elemento |
 
+## Deploy (VPS + Docker + Traefik)
+
+Rodando em <https://editor.eiharold.cloud> — container próprio atrás do Traefik, na rede
+externa `traefik`, com deploy automático por push na `main` via GitHub Actions.
+
+- `Dockerfile` — nginx alpine servindo os estáticos (`nginx.conf`: gzip, `no-cache` em
+  HTML/CSS/JS porque o app não tem build com hash, cache longo para imagens).
+- `docker-compose.yml` — labels do Traefik + rede externa `traefik`; o domínio vem de
+  `OMNIEDITOR_DOMAIN` no `.env` ao lado do compose (só no servidor, fora do git).
+- `.github/workflows/deploy.yml` — roda em `/root/sites-estaticos/omnieditor` e requer os
+  secrets `DEPLOY_HOST`, `DEPLOY_USER` e `DEPLOY_SSH_KEY`.
+
+Setup inicial no servidor (uma vez):
+
+```bash
+git clone https://github.com/eiharold/omnieditor.git /root/sites-estaticos/omnieditor
+cd /root/sites-estaticos/omnieditor
+echo 'OMNIEDITOR_DOMAIN=editor.eiharold.cloud' > .env
+docker compose up -d --build
+```
+
+O DNS de `editor.eiharold.cloud` aponta para o IP do VPS (o Traefik emite o certificado
+sozinho). O HTTPS não é opcional: a File System Access API só funciona em contexto seguro.
+
 ## Estrutura
 
 ```

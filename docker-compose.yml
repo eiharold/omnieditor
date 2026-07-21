@@ -1,0 +1,21 @@
+# OmniEditor em container próprio, atrás do Traefik já existente no VPS.
+# OMNIEDITOR_DOMAIN vem do .env ao lado deste compose (só no servidor, fora do git),
+# mesmo padrão dos outros sites estáticos.
+services:
+  omnieditor:
+    build: .
+    container_name: site_omnieditor
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.omnieditor.rule=Host(`${OMNIEDITOR_DOMAIN}`)"
+      - "traefik.http.routers.omnieditor.entrypoints=websecure"
+      - "traefik.http.routers.omnieditor.tls.certresolver=letsencrypt"
+      - "traefik.http.services.omnieditor.loadbalancer.server.port=80"
+    networks:
+      - traefik
+
+# Rede externa compartilhada com o Traefik (criada fora deste compose)
+networks:
+  traefik:
+    external: true

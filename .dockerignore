@@ -1,0 +1,13 @@
+.git
+.github
+.claude
+.vscode
+.idea
+.DS_Store
+**/.DS_Store
+README.md
+server.py
+docker-compose.yml
+Dockerfile
+.dockerignore
+.gitignore

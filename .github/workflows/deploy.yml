@@ -1,0 +1,33 @@
+# Deploy contínuo: todo push na main atualiza o servidor via SSH.
+# Requer os secrets DEPLOY_HOST, DEPLOY_USER e DEPLOY_SSH_KEY no repositório
+# (Settings → Secrets and variables → Actions).
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}   # permite disparar manualmente pela aba Actions
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Atualizar servidor via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          timeout: 120s
+          command_timeout: 10m
+          script_stop: true
+          script: |
+            cd /root/sites-estaticos/omnieditor
+            git fetch origin main
+            git reset --hard origin/main
+            docker compose up -d --build
+            docker compose ps

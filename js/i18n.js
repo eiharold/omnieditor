@@ -3,7 +3,9 @@
 
 export const LANGS = { 'pt-BR': 'Português', 'en': 'English', 'es': 'Español' };
 
-let lang = 'pt-BR';
+// Padrão do app (o usuário pode trocar; a escolha fica no localStorage).
+// Note que pt-BR continua sendo o idioma BASE — é a chave do dicionário.
+let lang = 'en';
 const changeListeners = [];
 
 // Dicionários: só EN e ES precisam de entradas (pt-BR é a própria chave).

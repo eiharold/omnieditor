@@ -36,7 +36,7 @@ function applyTheme(theme, accent) {
 
 function initTheme() {
   const prefs = loadPrefs();
-  applyTheme(prefs.theme || 'dark', prefs.accent || 'purple');
+  applyTheme(prefs.theme || 'light', prefs.accent || 'purple');
 
   $('#btnSettings').addEventListener('click', e => {
     e.stopPropagation();

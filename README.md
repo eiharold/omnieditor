@@ -106,8 +106,9 @@ O campo **src** (e o de **imagem de fundo**) aplica só ao pressionar Enter ou s
 
 ## Idiomas, tema e sessão
 
-- **Idioma** (⚙ menu): Português do Brasil, Inglês e Espanhol — troca toda a interface na hora, sem recarregar.
-- **Tema** claro/escuro + cor de destaque (roxo padrão).
+- **Idioma** (⚙ menu): Inglês (padrão), Português do Brasil e Espanhol — troca toda a interface na hora, sem recarregar.
+- **Tema** claro (padrão) ou escuro + cor de destaque (roxo padrão).
+- As duas escolhas ficam no `localStorage`: quem já escolheu continua com a sua preferência.
 - **Voltar às configurações da página** (⚙ menu): desseleciona e volta ao painel da página.
 - **Sessão**: o último arquivo/pasta é lembrado (IndexedDB). Ao recarregar, a página reabre automaticamente se a permissão persistir; caso contrário, a tela inicial oferece um botão **Reabrir**. (Edições não são salvas automaticamente.)
 
@@ -146,7 +147,7 @@ Botão direito em qualquer elemento do canvas: editar texto, copiar/recortar/col
   tela inteira, sem moldura nem cantos arredondados, porque ali o tamanho já é o real. Nas
   outras views a moldura fica, que é o que delimita o recorte.
 - **Histórico de edições**: versões gravadas ao abrir, salvar e exportar (IndexedDB do navegador, máx. 30 por arquivo) — restaure, baixe ou exclua pelo painel do relógio
-- **Temas**: claro/escuro + 7 cores de destaque (roxo padrão)
+- **Temas**: claro (padrão) ou escuro + 7 cores de destaque (roxo padrão)
 
 ## Atalhos
 

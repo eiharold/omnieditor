@@ -698,6 +698,17 @@ function openDocPanel(tab = 'general') {
   openDocTab(tab);
 }
 
+// Mantém o painel do documento em dia quando a página muda por fora dele
+// (desfazer/refazer, edição de regra no painel de CSS…).
+function syncDocPanel() {
+  if ($('#docDrawer').hidden || !canvas.getDoc()) return;
+  const custom = canvas.getCustomCss();
+  if ($('#customCssArea').value !== custom) $('#customCssArea').value = custom;
+  // só a aba Estilos: a Geral tem campos de texto que perderiam o foco se
+  // fossem re-renderizados enquanto o usuário digita
+  if ($('.doc-tab.active')?.dataset.dtab === 'styles') renderStylesTab($('#docStyles'));
+}
+
 function closeDocPanel() {
   $('#docDrawer').hidden = true;
   $('#btnCss').classList.remove('active');
@@ -1054,6 +1065,7 @@ function init() {
     refreshSelectors();
     canvas.refreshBoxes();
     updateDirtyUI();
+    syncDocPanel();
   }, 200);
 
   canvas.initCanvas($('#canvasFrame'), {

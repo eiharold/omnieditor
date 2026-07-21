@@ -807,6 +807,37 @@ function cleanBodyClone() {
   return clone;
 }
 
+// Caminho do elemento até o body, como índices entre irmãos. Elementos do
+// editor (overlay etc.) são ignorados na contagem: eles não existem no
+// snapshot, então incluí-los deslocaria os índices na volta.
+const contentChildren = parent =>
+  [...parent.children].filter(n => !n.hasAttribute('data-omni-editor') && !n.classList.contains('__omni-overlay'));
+
+function nodePath(elm) {
+  if (!elm || !doc || elm === doc.body) return null;
+  const path = [];
+  let n = elm;
+  while (n && n !== doc.body) {
+    const p = n.parentElement;
+    if (!p) return null;
+    const i = contentChildren(p).indexOf(n);
+    if (i < 0) return null;
+    path.unshift(i);
+    n = p;
+  }
+  return path;
+}
+
+function nodeAtPath(path) {
+  if (!path || !doc) return null;
+  let n = doc.body;
+  for (const i of path) {
+    n = contentChildren(n)[i];
+    if (!n) return null;
+  }
+  return n;
+}
+
 function headStyleTags() {
   return [...doc.head.querySelectorAll('style')]
     .filter(t => !t.hasAttribute('data-omni-editor') && !t.hasAttribute('data-omni-custom'));
@@ -824,12 +855,17 @@ export function getSnapshot() {
     // strings são imutáveis: guardar referências aqui custa quase nada
     cssTexts: Object.fromEntries([...cssFiles].map(([p, v]) => [p, v.text])),
     userJs: { ...userJs },
+    // para reselecionar o mesmo elemento depois do desfazer
+    selPath: nodePath(selected),
   };
 }
 
 export function restoreSnapshot(snap) {
   if (!doc) return;
   editingEl = null;
+  // o elemento selecionado é destruído pelo innerHTML abaixo; guarda o caminho
+  // para reselecionar o equivalente e não jogar o usuário fora do painel
+  const wantPath = nodePath(selected) || snap.selPath;
   select(null);
   pauseObserver(true);
   doc.body.innerHTML = snap.body;
@@ -850,6 +886,9 @@ export function restoreSnapshot(snap) {
   createOverlay();
   pauseObserver(false);
   markDirty();
+  // se o elemento ainda existe nesta versão, volta a selecioná-lo
+  const again = nodeAtPath(wantPath);
+  if (again) select(again);
   cb.onDomChanged?.();
 }
 

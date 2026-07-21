@@ -216,7 +216,9 @@ export function scanPage() {
 // Aplicação global
 // ============================================================
 // Reescreve todas as ocorrências de um item. `replacer(occ)` devolve o novo texto.
-async function replaceOccurrences(occs, replacer) {
+// `base` (opcional) é o texto de partida de cada alvo — usado na prévia ao vivo,
+// onde toda escrita parte do texto ORIGINAL e não do já modificado.
+async function replaceOccurrences(occs, replacer, base = null) {
   const sources = getSources();
   const bySource = new Map();
   const byNode = new Map();
@@ -240,18 +242,67 @@ async function replaceOccurrences(occs, replacer) {
   for (const [sourceId, list] of bySource) {
     const source = sources.find(s => s.id === sourceId);
     if (!source) continue;
-    await applySourceText(source, splice(source.text, list));
+    await applySourceText(source, splice(base?.get(sourceId) ?? source.text, list));
   }
   for (const [node, list] of byNode) {
-    node.setAttribute('style', splice(node.getAttribute('style') || '', list));
+    node.setAttribute('style', splice(base?.get(node) ?? (node.getAttribute('style') || ''), list));
   }
   markDirty();
   onChanged?.();
 }
 
+// ---- prévia ao vivo (arrastar no seletor de cor) ----
+// Cada escrita invalida os offsets guardados, então a prévia sempre parte do
+// texto original capturado no início da interação. Assim dá para arrastar à
+// vontade e tudo continua reversível com um único desfazer.
+let live = null;   // { item, base: Map(alvo → texto original) }
+
+export const isLive = () => !!live;
+
+function captureBase(occs) {
+  const sources = getSources();
+  const base = new Map();
+  for (const occ of occs) {
+    if (occ.kind === 'source') {
+      if (!base.has(occ.sourceId)) base.set(occ.sourceId, sources.find(s => s.id === occ.sourceId)?.text ?? '');
+    } else if (!base.has(occ.node)) {
+      base.set(occ.node, occ.node.getAttribute('style') || '');
+    }
+  }
+  return base;
+}
+
+function beginLive(item) {
+  if (live?.item === item) return;
+  checkpoint(null);   // um único ponto de desfazer para a interação inteira
+  live = { item, base: captureBase(item.occs) };
+}
+
+const endLive = () => { live = null; };
+
+const writeColor = (item, hex, base) =>
+  replaceOccurrences(item.occs, occ => recolorToken(occ.token, hex, item.alpha), base);
+
+// Arrastar no seletor dispara muitos `input`: limita a uma escrita a cada 16ms.
+// (setTimeout e não rAF: rAF não roda em aba sem pintura, e a escrita ficaria
+// pendurada até a aba voltar ao primeiro plano.)
+let pending = null, timer = 0;
+function queueColor(item, hex) {
+  pending = hex;
+  if (timer) return;
+  timer = setTimeout(() => {
+    timer = 0;
+    const v = pending;
+    pending = null;
+    if (live && v) writeColor(item, v, live.base);
+  }, 16);
+}
+
 export async function applyColor(item, newHex) {
-  checkpoint('design:color:' + item.key);
-  await replaceOccurrences(item.occs, occ => recolorToken(occ.token, newHex, item.alpha));
+  beginLive(item);
+  const base = live.base;
+  endLive();
+  await writeColor(item, newHex, base);
   toast(t('{0} ocorrências atualizadas', item.occs.length), 'ok');
 }
 
@@ -273,6 +324,9 @@ const FONT_PRESETS = [
 ];
 
 export function renderStylesTab(container) {
+  // durante o arrasto no seletor de cor, revarrer trocaria os cards por novos
+  // e o input perderia o foco no meio da interação
+  if (live) return;
   container.innerHTML = '';
   if (!canvas.getDoc()) {
     container.appendChild(el('p', { class: 'doc-hint' }, [t('Abra uma página primeiro')]));
@@ -334,10 +388,17 @@ function colorCard(item, container) {
     ]),
   ]);
 
+  // arrastando: aplica na página em tempo real, sem revarrer (os offsets do
+  // item precisam continuar válidos até o usuário soltar)
+  picker.addEventListener('input', () => {
+    beginLive(item);
+    swatch.style.setProperty('--c', picker.value);
+    queueColor(item, picker.value.toLowerCase());
+  });
+  // soltou: fecha a interação e revarre, porque os offsets mudaram
   picker.addEventListener('change', async () => {
-    if (picker.value.toLowerCase() === item.hex.toLowerCase()) return;
     await applyColor(item, picker.value.toLowerCase());
-    renderStylesTab(container);   // offsets mudaram: revarre
+    renderStylesTab(container);
   });
   return card;
 }

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>OmniEditor — Editor Visual de HTML</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/editor.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23A78BFA'/%3E%3Cstop offset='1' stop-color='%236D28D9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M24 3 41 15 36 40 12 40 7 15Z' fill='url(%23g)'/%3E%3Cpath d='M24 3 7 15 24 22Z' fill='%23fff' opacity='.18'/%3E%3Cpath d='M41 15 36 40 24 22Z' fill='%23000' opacity='.18'/%3E%3Cg stroke='%23fff' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 20 15 25 19 30'/%3E%3Cpath d='M29 20 33 25 29 30'/%3E%3Cpath d='M26 19 22 31'/%3E%3C/g%3E%3C/svg%3E">
+</head>
+<body data-theme="dark" data-accent="purple">
+
+<!-- ======== TOPBAR ======== -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="icon-btn mobile-only" id="btnMenuLeft" title="Menu">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+    <div class="logo" title="OmniEditor">
+      <span class="logo-mark">
+        <svg viewBox="0 0 48 48"><defs><linearGradient id="omniLogo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#6D28D9"/></linearGradient></defs><path d="M24 3 41 15 36 40 12 40 7 15Z" fill="url(#omniLogo)"/><path d="M24 3 7 15 24 22Z" fill="#fff" opacity=".18"/><path d="M24 3 41 15 24 22Z" fill="#fff" opacity=".07"/><path d="M7 15 12 40 24 22Z" fill="#000" opacity=".1"/><path d="M41 15 36 40 24 22Z" fill="#000" opacity=".2"/><g stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M19 20 15 25 19 30"/><path d="M29 20 33 25 29 30"/><path d="M26 19 22 31"/></g></svg>
+      </span>
+      <span class="logo-name">Omni<b>Editor</b></span>
+    </div>
+    <div class="file-info" id="fileInfo" hidden>
+      <span class="file-name" id="fileName">—</span>
+      <span class="dirty-dot" id="dirtyDot" data-i18n-title="Alterações não salvas" title="Alterações não salvas" hidden></span>
+      <button class="file-switch" id="btnFileSwitch" data-i18n-title="Trocar de arquivo" title="Trocar de arquivo" aria-haspopup="true" hidden>
+        <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="topbar-center">
+    <div class="history-btns">
+      <button class="icon-btn" id="btnUndo" data-i18n-title="Desfazer" data-kbd="⌘Z" title="Desfazer (⌘Z)" disabled>
+        <svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+      </button>
+      <button class="icon-btn" id="btnRedo" data-i18n-title="Refazer" data-kbd="⇧⌘Z" title="Refazer (⇧⌘Z)" disabled>
+        <svg viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg>
+      </button>
+    </div>
+    <div class="sep"></div>
+    <button class="device-picker mobile-only" id="btnDevicePicker" data-i18n-title="Tamanho da tela" title="Tamanho da tela" aria-haspopup="true">
+      <span class="dp-icon" id="devicePickerIcon"></span>
+      <svg class="dp-caret" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+    <div class="device-btns desktop-only" id="deviceBtns">
+      <button class="icon-btn active" data-device="desktop" data-i18n-title="Desktop" title="Desktop">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </button>
+      <button class="icon-btn" data-device="laptop" data-i18n-title="Laptop" title="Laptop">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg>
+      </button>
+      <button class="icon-btn" data-device="tablet" data-i18n-title="Tablet" title="Tablet">
+        <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+      </button>
+      <button class="icon-btn" data-device="mobile" data-i18n-title="Mobile" title="Mobile">
+        <svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+      </button>
+      <input type="number" class="device-width-input" id="deviceWidthInput" data-i18n-title="Largura personalizada (px)" title="Largura personalizada (px)" placeholder="px" min="240" max="3840">
+    </div>
+    <div class="sep"></div>
+    <select id="zoomSelect" class="zoom-select" data-i18n-title="Zoom" title="Zoom">
+      <option value="fit" data-i18n="Ajustar">Ajustar</option>
+      <option value="0.5">50%</option>
+      <option value="0.75">75%</option>
+      <option value="1" selected>100%</option>
+    </select>
+  </div>
+
+  <div class="topbar-right">
+    <button class="icon-btn" id="btnPreview" data-i18n-title="Modo de visualização — interagir com a página" data-kbd="⌘P" title="Modo de visualização (⌘P)">
+      <svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+    </button>
+    <button class="icon-btn desktop-only" id="btnZen" data-i18n-title="Ocultar/mostrar painéis laterais" data-kbd="⌘." title="Modo foco (⌘.)">
+      <svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    </button>
+    <button class="icon-btn" id="btnHistory" data-i18n-title="Histórico de edições" title="Histórico de edições">
+      <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 3"/></svg>
+    </button>
+    <button class="icon-btn" id="btnCss" data-i18n-title="CSS personalizado" title="CSS personalizado">
+      <svg viewBox="0 0 24 24"><path d="m8 6-6 6 6 6M16 6l6 6-6 6"/></svg>
+    </button>
+    <button class="icon-btn" id="btnSettings" data-i18n-title="Tema e aparência" title="Tema e aparência">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+    </button>
+    <button class="icon-btn narrow-only" id="btnInspector" data-i18n-title="Abrir/fechar painel de edição" title="Abrir/fechar painel de edição">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M15 3v18"/></svg>
+    </button>
+    <div class="sep"></div>
+    <div class="save-split">
+      <button class="btn primary" id="btnSave" data-i18n="Salvar" data-i18n-title="Salvar no arquivo" data-kbd="⌘S" title="Salvar (⌘S)">Salvar</button>
+      <button class="btn primary split-arrow" id="btnSaveMenu" data-i18n-title="Mais opções de arquivo" title="Mais opções de arquivo" aria-haspopup="true">
+        <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- menu do botão Salvar -->
+<div class="dropdown-menu" id="saveMenu" hidden>
+  <button class="dd-item" id="miOpen"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg><span data-i18n="Abrir">Abrir</span></button>
+  <button class="dd-item" id="miSave"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg><span data-i18n="Salvar">Salvar</span></button>
+  <button class="dd-item" id="miSaveAs"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M12 11v6M9 14h6"/></svg><span data-i18n="Salvar como">Salvar como</span></button>
+</div>
+
+<!-- ======== MAIN ======== -->
+<main class="workspace">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar left" id="leftSidebar">
+    <div class="side-tabs">
+      <button class="side-tab active" data-tab="elements" data-i18n="Elementos">Elementos</button>
+      <button class="side-tab" data-tab="layers" data-i18n="Camadas">Camadas</button>
+      <button class="side-tab" data-tab="selectors">CSS</button>
+    </div>
+    <div class="side-panel active" data-panel="elements" id="elementsPanel">
+      <div class="panel-hint" data-i18n="Arraste um elemento para a página">Arraste um elemento para a página</div>
+      <div id="elementsGroups"></div>
+    </div>
+    <div class="side-panel" data-panel="layers" id="layersPanel">
+      <div class="layers-tree" id="layersTree"></div>
+    </div>
+    <div class="side-panel" data-panel="selectors" id="selectorsPanel">
+      <div class="sel-toolbar">
+        <input type="text" id="selSearch" class="ctl-input" data-i18n-ph="Buscar seletor…" placeholder="Buscar seletor…">
+        <div class="sel-chips">
+          <button class="chip active" data-selfilter="all" data-i18n="Todos">Todos</button>
+          <button class="chip" data-selfilter="class">.classes</button>
+          <button class="chip" data-selfilter="id">#ids</button>
+        </div>
+        <button class="btn ghost sm" id="btnNewRule" data-i18n="+ Nova regra">+ Nova regra</button>
+      </div>
+      <div class="sel-list" id="selList"></div>
+    </div>
+  </aside>
+
+  <!-- CANVAS -->
+  <section class="canvas-area" id="canvasArea">
+    <div class="canvas-scroll" id="canvasScroll">
+      <div class="device-frame" id="deviceFrame">
+        <iframe id="canvasFrame" title="Página em edição"></iframe>
+      </div>
+    </div>
+    <div class="breadcrumbs" id="breadcrumbs"></div>
+
+    <!-- Welcome overlay -->
+    <div class="welcome" id="welcomeOverlay">
+      <button class="icon-btn welcome-close" id="btnCloseWelcome" title="Fechar">
+        <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <div class="welcome-card">
+        <div class="welcome-logo">
+          <svg viewBox="0 0 48 48"><defs><linearGradient id="omniLogoBig" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#6D28D9"/></linearGradient></defs><path d="M24 3 41 15 36 40 12 40 7 15Z" fill="url(#omniLogoBig)"/><path d="M24 3 7 15 24 22Z" fill="#fff" opacity=".18"/><path d="M24 3 41 15 24 22Z" fill="#fff" opacity=".07"/><path d="M7 15 12 40 24 22Z" fill="#000" opacity=".1"/><path d="M41 15 36 40 24 22Z" fill="#000" opacity=".2"/><g stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M19 20 15 25 19 30"/><path d="M29 20 33 25 29 30"/><path d="M26 19 22 31"/></g></svg>
+        </div>
+        <h1>OmniEditor</h1>
+        <p class="welcome-sub" data-i18n="Editor visual para suas páginas HTML. Abra uma pasta para que os arquivos CSS/JS externos sejam carregados automaticamente.">Editor visual para suas páginas HTML. Abra uma pasta para que os arquivos CSS/JS externos sejam carregados automaticamente.</p>
+        <div class="welcome-row reopen-row" id="reopenRow" hidden>
+          <button class="btn primary lg" id="btnReopen">Reabrir</button>
+        </div>
+        <div class="welcome-actions">
+          <button class="btn primary lg" id="btnOpenFolder">
+            <svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>
+            <span data-i18n="Abrir pasta do projeto">Abrir pasta do projeto</span>
+          </button>
+          <button class="btn ghost lg" id="btnOpenFile" data-i18n="Abrir arquivo HTML">Abrir arquivo HTML</button>
+        </div>
+        <div class="welcome-row">
+          <button class="link-btn" id="btnNewPage" data-i18n="Nova página em branco">Nova página em branco</button>
+          <span class="dot-sep">·</span>
+          <button class="link-btn" id="btnDemoPage" data-i18n="Experimentar com página demo">Experimentar com página demo</button>
+        </div>
+        <p class="welcome-drop" data-i18n="…ou solte um arquivo .html aqui">…ou solte um arquivo .html aqui</p>
+        <p class="made-by"><span data-i18n="Feito com ❤️ por">Feito com ❤️ por</span> <a href="https://eiharold.com" target="_blank" rel="noopener">eiHarold</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="sidebar right" id="rightSidebar">
+    <div class="inspector-head" id="inspectorHead">
+      <span class="insp-tag" id="inspTag" data-i18n="Página">Página</span>
+      <span class="insp-name" id="inspName"></span>
+    </div>
+    <div class="side-tabs">
+      <button class="side-tab active" data-itab="style" data-i18n="Estilo">Estilo</button>
+      <button class="side-tab" data-itab="anim" data-i18n="Animação">Animação</button>
+      <button class="side-tab" data-itab="advanced" data-i18n="Avançado">Avançado</button>
+    </div>
+    <div class="inspector-body" id="inspectorBody">
+      <div class="inspector-empty" id="inspectorEmpty">
+        <svg viewBox="0 0 24 24"><path d="m3 3 7.07 16.97 2.51-7.39 7.39-2.51L3 3Z"/><path d="m13 13 6 6"/></svg>
+        <p data-i18n="Clique em um elemento da página para editá-lo">Clique em um elemento da página para editá-lo</p>
+      </div>
+      <div class="itab-panel" data-ipanel="style" id="stylePanel"></div>
+      <div class="itab-panel" data-ipanel="anim" id="animPanel"></div>
+      <div class="itab-panel" data-ipanel="advanced" id="advancedPanel"></div>
+    </div>
+  </aside>
+</main>
+
+<!-- backdrop das gavetas mobile -->
+<div class="mobile-backdrop" id="mobileBackdrop" hidden></div>
+
+<!-- ======== PAINEL DO DOCUMENTO (Geral / CSS / JS) ======== -->
+<div class="css-drawer doc-drawer" id="docDrawer" hidden>
+  <div class="css-drawer-head">
+    <strong data-i18n="Configurações da página">Configurações da página</strong>
+    <button class="icon-btn" id="btnCloseDoc" data-i18n-title="Fechar" title="Fechar">
+      <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="doc-tabs">
+    <button class="doc-tab active" data-dtab="general" data-i18n="Geral">Geral</button>
+    <button class="doc-tab" data-dtab="css">CSS</button>
+    <button class="doc-tab" data-dtab="js">JS</button>
+  </div>
+  <div class="doc-body">
+    <div class="doc-panel active" data-dpanel="general" id="docGeneral"></div>
+    <div class="doc-panel" data-dpanel="css">
+      <p class="doc-hint" data-i18n="CSS aplicado em tempo real e salvo dentro da página.">CSS aplicado em tempo real e salvo dentro da página.</p>
+      <textarea id="customCssArea" class="doc-code" spellcheck="false" placeholder="/* Ex.:
+.hero h1 { letter-spacing: -0.03em; }
+@media (max-width: 768px) { .hero { padding: 40px 16px; } } */"></textarea>
+    </div>
+    <div class="doc-panel" data-dpanel="js">
+      <p class="doc-hint" data-i18n="JS salvo na página (roda quando a página é aberta fora do editor).">JS salvo na página (roda quando a página é aberta fora do editor).</p>
+      <label class="doc-code-label" data-i18n="Dentro do &lt;head&gt;">Dentro do &lt;head&gt;</label>
+      <textarea id="userJsHead" class="doc-code" spellcheck="false" placeholder="// ex.: tag de analytics, meta scripts…"></textarea>
+      <label class="doc-code-label" data-i18n="Antes de &lt;/body&gt;">Antes de &lt;/body&gt;</label>
+      <textarea id="userJsBody" class="doc-code" spellcheck="false" placeholder="// ex.: inicialização de scripts, interações…"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ======== SETTINGS POPOVER ======== -->
+<div class="popover" id="settingsPopover" hidden>
+  <div class="pop-section">
+    <label class="pop-label" data-i18n="Tema da interface">Tema da interface</label>
+    <div class="theme-toggle" id="themeToggle">
+      <button data-thm="light">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <span data-i18n="Claro">Claro</span>
+      </button>
+      <button data-thm="dark" class="active">
+        <svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        <span data-i18n="Escuro">Escuro</span>
+      </button>
+    </div>
+  </div>
+  <div class="pop-section">
+    <label class="pop-label" data-i18n="Cor de destaque">Cor de destaque</label>
+    <div class="accent-swatches" id="accentSwatches">
+      <button data-accent="purple" class="active" style="--sw:#8B5CF6" title="Roxo"></button>
+      <button data-accent="cyan"   style="--sw:#06B6D4" title="Ciano"></button>
+      <button data-accent="green"  style="--sw:#10B981" title="Verde"></button>
+      <button data-accent="amber"  style="--sw:#F59E0B" title="Âmbar"></button>
+      <button data-accent="pink"   style="--sw:#EC4899" title="Rosa"></button>
+      <button data-accent="red"    style="--sw:#EF4444" title="Vermelho"></button>
+    </div>
+  </div>
+  <div class="pop-section">
+    <label class="pop-label" data-i18n="Idioma">Idioma</label>
+    <select id="langSelect" class="ctl-select"></select>
+  </div>
+  <div class="pop-section">
+    <button class="btn ghost pop-wide" id="btnAbout" data-i18n="Sobre o OmniEditor">Sobre o OmniEditor</button>
+  </div>
+</div>
+
+<!-- ======== FILE CHOOSER MODAL ======== -->
+<div class="modal-backdrop" id="fileModal" hidden>
+  <div class="modal">
+    <h3 data-i18n="Escolha a página para editar">Escolha a página para editar</h3>
+    <div class="file-list" id="fileList"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="btnCancelFile" data-i18n="Cancelar">Cancelar</button>
+    </div>
+    <p class="made-by"><span data-i18n="Feito com ❤️ por">Feito com ❤️ por</span> <a href="https://eiharold.com" target="_blank" rel="noopener">eiHarold</a></p>
+  </div>
+</div>
+
+<!-- ======== RULE EDITOR DRAWER ======== -->
+<div class="css-drawer rule-drawer" id="ruleDrawer" hidden>
+  <div class="css-drawer-head">
+    <div class="rule-head-main">
+      <strong id="ruleSelector" class="rule-selector">.classe</strong>
+      <span class="css-hint" id="ruleMeta"></span>
+    </div>
+    <button class="icon-btn" id="btnCloseRule" data-i18n-title="Fechar" title="Fechar">
+      <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="rule-body">
+    <div class="rule-section-label" data-i18n="Propriedades comuns">Propriedades comuns</div>
+    <div class="rule-controls" id="ruleControls"></div>
+    <div class="rule-section-label"><span data-i18n="Código da regra">Código da regra</span> <span class="css-hint" data-i18n="aplicado em tempo real">aplicado em tempo real</span></div>
+    <textarea id="ruleCode" spellcheck="false" data-i18n-ph="propriedade: valor;" placeholder="propriedade: valor;"></textarea>
+  </div>
+  <div class="rule-foot">
+    <button class="btn danger" id="btnDeleteRule" data-i18n="Excluir regra">Excluir regra</button>
+  </div>
+</div>
+
+<!-- ======== HISTORY MODAL ======== -->
+<div class="modal-backdrop" id="historyModal" hidden>
+  <div class="modal">
+    <h3 data-i18n="Histórico de edições">Histórico de edições</h3>
+    <p class="modal-sub" id="historyInfo"></p>
+    <div class="file-list" id="historyList"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="btnCloseHistory" data-i18n="Fechar">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div class="ctx-menu" id="ctxMenu" hidden></div>
+
+<!-- menu de troca de arquivo -->
+<div class="dropdown-menu" id="fileMenu" hidden></div>
+
+<!-- menu de tamanho de tela (mobile) -->
+<div class="dropdown-menu" id="deviceMenu" hidden></div>
+
+<!-- ======== MODAL DE ENTRADA (substitui prompt) ======== -->
+<div class="modal-backdrop" id="promptModal" hidden>
+  <div class="modal prompt-modal">
+    <h3 id="promptTitle"></h3>
+    <label class="prompt-label" id="promptLabel"></label>
+    <input type="text" id="promptInput" class="ctl-input" autocomplete="off">
+    <div class="modal-actions">
+      <button class="btn ghost" id="promptCancel" data-i18n="Cancelar">Cancelar</button>
+      <button class="btn primary" id="promptOk" data-i18n="Aplicar">Aplicar</button>
+    </div>
+  </div>
+</div>
+
+<!-- barra flutuante de texto rico -->
+<div class="rte-toolbar" id="rteToolbar" hidden>
+  <button data-rte="bold" data-i18n-title="Negrito" data-kbd="⌘B" title="Negrito"><b>B</b></button>
+  <button data-rte="italic" data-i18n-title="Itálico" data-kbd="⌘I" title="Itálico"><i>I</i></button>
+  <button data-rte="underline" data-i18n-title="Sublinhado" data-kbd="⌘U" title="Sublinhado"><u>U</u></button>
+  <button data-rte="strikeThrough" data-i18n-title="Riscado" title="Riscado"><s>S</s></button>
+  <span class="rte-sep"></span>
+  <button data-rte="link" data-i18n-title="Inserir link" title="Inserir link"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></button>
+  <button data-rte="span" data-i18n-title="Envolver em span com classe" title="Envolver em <span> com classe"><svg viewBox="0 0 24 24"><path d="m8 6-4 6 4 6M16 6l4 6-4 6"/></svg></button>
+  <span class="rte-sep"></span>
+  <button data-rte="removeFormat" data-i18n-title="Limpar formatação" title="Limpar formatação"><svg viewBox="0 0 24 24"><path d="M6 4h12M9 4 7 20M15 4l-1 8M5 20h6M15 15l6 6M21 15l-6 6"/></svg></button>
+</div>
+
+<!-- ======== SOBRE ======== -->
+<div class="modal-backdrop" id="aboutModal" hidden>
+  <div class="modal about-modal">
+    <div class="about-head">
+      <span class="about-logo">
+        <svg viewBox="0 0 48 48"><defs><linearGradient id="omniLogoAbout" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#6D28D9"/></linearGradient></defs><path d="M24 3 41 15 36 40 12 40 7 15Z" fill="url(#omniLogoAbout)"/><path d="M24 3 7 15 24 22Z" fill="#fff" opacity=".18"/><path d="M41 15 36 40 24 22Z" fill="#000" opacity=".2"/><g stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M19 20 15 25 19 30"/><path d="M29 20 33 25 29 30"/><path d="M26 19 22 31"/></g></svg>
+      </span>
+      <div>
+        <h3>OmniEditor</h3>
+        <span class="about-version" id="aboutVersion">v1.0.0</span>
+      </div>
+    </div>
+    <p class="about-text" data-i18n="Editor visual de páginas HTML — edite suas próprias páginas com granularidade total, em tempo real, direto no navegador.">Editor visual de páginas HTML — edite suas próprias páginas com granularidade total, em tempo real, direto no navegador.</p>
+    <p class="about-text">
+      <span data-i18n="Criado por">Criado por</span>
+      <a href="https://eiharold.com" target="_blank" rel="noopener">eiharold.com</a> ·
+      <a href="https://github.com/eiharold/OmniEditor" target="_blank" rel="noopener" id="aboutRepo">GitHub</a>
+    </p>
+    <p class="about-text about-disclaimer" data-i18n="Produto livre para uso. O autor não se responsabiliza pelo mau uso da ferramenta nem por eventuais bugs ou perda de dados — faça backup das suas páginas.">Produto livre para uso. O autor não se responsabiliza pelo mau uso da ferramenta nem por eventuais bugs ou perda de dados — faça backup das suas páginas.</p>
+    <div class="modal-actions">
+      <button class="btn primary" id="btnCloseAbout" data-i18n="Fechar">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<input type="file" id="fileInput" accept=".html,.htm" hidden>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

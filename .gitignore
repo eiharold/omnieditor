@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# configuração local do editor/IDE
+.claude/
+.vscode/
+.idea/
+
+# dependências / build (não usados hoje, mas evitam sujeira futura)
+node_modules/
+dist/

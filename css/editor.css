@@ -8,6 +8,7 @@
   --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
   --topbar-h: 48px;
+  --bottombar-h: 0px;   /* vira 48px só no celular (ver @media 760px) */
   --left-w: 264px;
   --right-w: 308px;
   --radius: 8px;
@@ -182,7 +183,7 @@ svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width:
 .workspace {
   display: grid;
   grid-template-columns: var(--left-w) 1fr var(--right-w);
-  height: calc(100vh - var(--topbar-h));
+  height: calc(100vh - var(--topbar-h) - var(--bottombar-h));
 }
 /* painel de edição (direita) recolhido no desktop */
 body.no-right .workspace { grid-template-columns: var(--left-w) 1fr; }
@@ -787,7 +788,7 @@ input.ctl-input::placeholder, textarea.ctl-textarea::placeholder { color: var(--
 
 /* ============ CSS DRAWER ============ */
 .css-drawer {
-  position: fixed; right: 0; top: var(--topbar-h); bottom: 0;
+  position: fixed; right: 0; top: var(--topbar-h); bottom: var(--bottombar-h);
   width: 440px; max-width: 90vw;
   background: var(--bg);
   border-left: 1px solid var(--border);
@@ -938,7 +939,7 @@ body.zen .sidebar { display: none; }
 
 /* ============ TOASTS ============ */
 .toast-wrap {
-  position: fixed; bottom: 44px; left: 50%; transform: translateX(-50%);
+  position: fixed; bottom: calc(44px + var(--bottombar-h)); left: 50%; transform: translateX(-50%);
   display: flex; flex-direction: column; align-items: center; gap: 8px;
   z-index: 300; pointer-events: none;
 }
@@ -962,9 +963,20 @@ body.zen .sidebar { display: none; }
 
 /* ============ RESPONSIVO ============ */
 .mobile-backdrop {
-  position: fixed; inset: var(--topbar-h) 0 0 0;
+  position: fixed; inset: var(--topbar-h) 0 var(--bottombar-h) 0;
   background: rgba(0,0,0,.45); z-index: 60;
   animation: fadeIn .15s ease;
+}
+
+/* barra inferior: ferramentas de edição ao alcance do polegar (só no celular) */
+.bottombar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 80;
+  height: var(--bottombar-h);
+  display: flex; align-items: center; justify-content: space-around;
+  gap: 2px; padding: 0 6px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 @keyframes fadeIn { from { opacity: 0; } }
 
@@ -981,25 +993,30 @@ body.zen .sidebar { display: none; }
 
 /* celular / toque: painéis viram gavetas */
 @media (max-width: 760px) {
+  /* a barra do topo se divide em duas: identidade/saída em cima,
+     ferramentas de edição embaixo (ver .bottombar e syncBarLayout) */
+  :root { --bottombar-h: calc(48px + env(safe-area-inset-bottom)); }
+  /* no modo de visualização a barra inferior some e o canvas recupera o espaço */
+  body.zen { --bottombar-h: 0px; }
+  body.zen .bottombar { display: none; }
+
   .mobile-only { display: grid !important; }
   .desktop-only { display: none !important; }
-  #btnHistory, #zoomSelect, .device-width-input, .topbar-center .sep { display: none; }
-  /* mais respiro na barra: sem logo no celular */
-  .logo { display: none; }
+  #zoomSelect, .device-width-input, .topbar-center .sep { display: none; }
   .device-picker.mobile-only { display: inline-flex !important; }
 
-  .topbar { padding: 0 6px; gap: 2px; overflow-x: auto; scrollbar-width: none; }
-  .topbar::-webkit-scrollbar { display: none; }
+  .topbar { padding: 0 8px; gap: 6px; }
   .topbar-left, .topbar-right { gap: 3px; flex: none; }
-  .topbar-center { gap: 3px; }
-  .icon-btn { width: 30px; height: 30px; }
-  .device-btns .icon-btn { width: 28px; }
-  .btn { padding: 0 10px; height: 30px; }
+  .topbar-center { gap: 3px; flex: 1; justify-content: center; }
+  .icon-btn { width: 32px; height: 32px; }
+  .btn { padding: 0 12px; height: 32px; }
+  .logo { display: flex; gap: 7px; }
   .logo-mark { width: 24px; height: 24px; }
+  .logo-name { display: block; font-size: 13px; }
 
   .workspace { grid-template-columns: 1fr; }
   .sidebar {
-    position: fixed; top: var(--topbar-h); bottom: 0; z-index: 70;
+    position: fixed; top: var(--topbar-h); bottom: var(--bottombar-h); z-index: 70;
     width: 84vw; max-width: 340px;
     transition: transform .25s ease;
     box-shadow: 0 0 40px rgba(0,0,0,.4);

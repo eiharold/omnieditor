@@ -848,7 +848,50 @@ function initRte() {
   });
 }
 
+// ============================================================
+// Barra inferior (celular)
+// ============================================================
+// No celular a barra do topo fica só com identidade + ações de saída
+// (logo, tamanho da tela, visualizar, salvar) e as ferramentas de edição
+// descem para uma barra fixa embaixo, ao alcance do polegar.
+//
+// Os botões não são duplicados: os nós reais são movidos de uma barra para a
+// outra, então listeners, estado `.active` e traduções continuam valendo.
+const BOTTOM_BAR_ITEMS = [
+  '#btnMenuLeft', '.history-btns', '#btnHistory', '#btnCss', '#btnSettings', '#btnInspector',
+];
+let barHome = null;   // onde cada item mora no layout largo
+
+function syncBarLayout() {
+  const bar = $('#bottomBar');
+  if (!bar) return;
+
+  // primeira chamada: memoriza a posição original de cada item
+  barHome ??= BOTTOM_BAR_ITEMS.map(sel => {
+    const node = $(sel);
+    return node && { node, parent: node.parentNode, next: node.nextSibling };
+  }).filter(Boolean);
+
+  const narrow = isNarrow();
+  bar.hidden = !narrow;
+
+  if (narrow) {
+    for (const sel of BOTTOM_BAR_ITEMS) {
+      const node = $(sel);
+      if (node && node.parentNode !== bar) bar.appendChild(node);
+    }
+  } else {
+    // devolve na ordem inversa para que os `next` guardados ainda existam
+    for (const { node, parent, next } of [...barHome].reverse()) {
+      if (node.parentNode !== parent) parent.insertBefore(node, next);
+    }
+  }
+}
+
 function initMobile() {
+  syncBarLayout();
+  addEventListener('resize', debounce(syncBarLayout, 150));
+
   // gavetas: handlers sempre ativos (o CSS decide quando os botões aparecem)
   $('#btnMenuLeft')?.addEventListener('click', () => {
     if (document.body.classList.contains('drawer-left')) closeDrawers();

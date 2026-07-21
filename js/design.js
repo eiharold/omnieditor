@@ -285,6 +285,18 @@ export function renderStylesTab(container) {
     t('Cores e fontes detectadas na página. Alterar aqui reescreve todas as ocorrências no CSS de origem.'),
   ]));
 
+  // ---- Fontes ----
+  const fontSec = el('div', { class: 'ds-section' });
+  fontSec.appendChild(el('h4', { class: 'ds-title' }, [
+    t('Fontes'), el('span', { class: 'ds-count' }, [String(fonts.length)]),
+  ]));
+  if (!fonts.length) {
+    fontSec.appendChild(el('p', { class: 'doc-hint' }, [t('Nenhuma família de fonte declarada no CSS da página.')]));
+  } else {
+    for (const item of fonts) fontSec.appendChild(fontCard(item, container));
+  }
+  container.appendChild(fontSec);
+
   // ---- Cores ----
   const colorSec = el('div', { class: 'ds-section' });
   colorSec.appendChild(el('h4', { class: 'ds-title' }, [
@@ -298,18 +310,6 @@ export function renderStylesTab(container) {
     colorSec.appendChild(grid);
   }
   container.appendChild(colorSec);
-
-  // ---- Fontes ----
-  const fontSec = el('div', { class: 'ds-section' });
-  fontSec.appendChild(el('h4', { class: 'ds-title' }, [
-    t('Fontes'), el('span', { class: 'ds-count' }, [String(fonts.length)]),
-  ]));
-  if (!fonts.length) {
-    fontSec.appendChild(el('p', { class: 'doc-hint' }, [t('Nenhuma família de fonte declarada no CSS da página.')]));
-  } else {
-    for (const item of fonts) fontSec.appendChild(fontCard(item, container));
-  }
-  container.appendChild(fontSec);
 }
 
 function usageLabel(n) {

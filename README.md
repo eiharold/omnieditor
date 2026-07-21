@@ -102,6 +102,13 @@ O campo **src** (e o de **imagem de fundo**) aplica só ao pressionar Enter ou s
 
 Interface responsiva: em telas pequenas os painéis viram **gavetas retráteis** — ☰ à esquerda (elementos/camadas/CSS) e o botão de **painel de edição** à direita (abre o inspetor por cima do canvas; também abre sozinho ao tocar num elemento). Fundo escurecido fecha. No celular a visualização padrão é a **mobile**, e dá para ver as demais (tablet/laptop/desktop) com **zoom-out automático** para caber na tela.
 
+No celular a barra se divide em **duas**:
+
+- **em cima** — logo + nome, o seletor de tamanho de tela no centro, e modo de visualização + Salvar à direita;
+- **embaixo** (fixa, ao alcance do polegar) — ☰ menu, desfazer, refazer, histórico, ajustes da página, configurações e o toggle do painel de edição. Ela **some no modo de visualização**, e o canvas recupera o espaço.
+
+Os botões não são duplicados: os nós reais são movidos entre as barras conforme a largura, então estado e traduções continuam valendo.
+
 ## Barra superior
 
 - **Salvar** (⌘S) — grava no arquivo atual (e nos CSS externos editados). A **seta ao lado** abre o menu com **Abrir**, **Salvar** e **Salvar como**.

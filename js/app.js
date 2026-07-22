@@ -5,7 +5,7 @@ import { state, loadPrefs, savePrefs, initHistory, checkpoint, undo, redo, canUn
 import { WIDGETS, SECTIONS } from './widgets.js';
 import * as canvas from './canvas.js';
 import { initLayers, refreshLayers } from './layers.js';
-import { initInspector, renderInspector, renderPageSettings } from './inspector.js';
+import { initInspector, renderInspector, renderPageSettings, resetState } from './inspector.js';
 import { BLANK_PAGE, DEMO_PAGE } from './demo.js';
 import * as versions from './versions.js';
 import { initSelectors, refreshSelectors } from './selectors.js';
@@ -1066,6 +1066,7 @@ function init() {
   canvas.initCanvas($('#canvasFrame'), {
     onSelect: elm => {
       hideContextMenu();
+      resetState();   // clicar num elemento sempre recomeça em Normal
       renderInspector(elm);
       renderBreadcrumbs(elm);
       refreshLayers();

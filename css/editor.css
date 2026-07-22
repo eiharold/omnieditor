@@ -820,9 +820,18 @@ input.ctl-input::placeholder, textarea.ctl-textarea::placeholder { color: var(--
 .insp-note { color: var(--text-3); font-size: 11px; line-height: 1.5; margin: 10px 0 0; }
 
 /* seletor de estado (Normal / Hover / Active) */
-.state-bar { padding: 12px 14px 12px; border-bottom: 1px solid var(--border-soft); background: var(--bg-2); }
+.state-bar {
+  padding: 12px 14px; border-bottom: 1px solid var(--border-soft); background: var(--bg-2);
+  position: sticky; top: 0; z-index: 5;
+}
 .state-bar .ctrl { margin-top: 0; }
-.state-note { color: var(--accent); font-weight: 500; }
+/* editando :hover / :active — precisa saltar aos olhos, senão o usuário edita
+   achando que está mexendo no estado normal e a página "não muda" */
+.state-bar.editing-state {
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.state-note { color: var(--accent); font-weight: 600; }
 
 /* campo de src de imagem com botão de escolher */
 .img-src-row { display: flex; gap: 6px; }

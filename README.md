@@ -68,9 +68,27 @@ um `#rrggbbaa` continua com o byte de alfa. Cores nomeadas e `hsl()` viram hex a
 alteradas. `var(--token)` é deixado em paz — quem usa variáveis CSS já tem o próprio
 design system, e o lugar de editá-lo é a aba CSS.
 
+## Quando uma edição "não pega"
+
+O editor grava estilo inline no elemento. Isso normalmente vence qualquer regra da
+página — mas há três casos em que não vence, e os três davam a impressão de que o
+editor estava quebrado. Agora todos são tratados:
+
+- **A página usa `!important`.** O estilo inline perde para ele. O editor detecta que
+  a edição não surtiu efeito e reaplica com `!important` — só nesses casos, para não
+  encher o HTML salvo de `!important` desnecessário.
+- **Largura/altura em elemento `display: inline`** (um `<span>`, um `<a>` solto): a CSS
+  simplesmente ignora. Um aviso explica e sugere mudar o Display.
+- **O tamanho é definido pelo contêiner** (item de flex/grid, ou um `min`/`max`). Um aviso
+  diz com que tamanho o elemento ficou e por quê.
+
 ## Estados (Normal / Hover / Active)
 
 No topo da aba **Estilo** há um seletor de estado. Em **Hover** ou **Active**, as edições deixam de ir para o `style` inline e viram uma regra CSS na própria página (`#id:hover { … }`), criada automaticamente — dá para editar cor, fundo, sombra, transform, opacidade, filtros etc. para cada estado. O elemento ganha um `id` automático na primeira edição, e o efeito já é visível ao passar o mouse no canvas.
+
+Enquanto o estado não é o Normal, a barra fica **destacada e presa no topo** do painel, e
+**clicar em qualquer elemento no canvas volta para Normal** — antes dava para ficar preso em
+Hover sem perceber e achar que as edições não estavam funcionando.
 
 ## Edição de texto rica
 

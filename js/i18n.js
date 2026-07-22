@@ -39,6 +39,10 @@ const DICT = {
     'Documento de uma página': 'Single-page document',
     'Copiar': 'Copy',
     'Copiar HTML para a área de transferência': 'Copy HTML to the clipboard',
+    '{0} não afeta um elemento inline. Mude o Display para block ou inline-block.':
+      '{0} has no effect on an inline element. Change Display to block or inline-block.',
+    'O elemento ficou com {0} em vez de {1}: o tamanho está sendo definido pelo contêiner (flex/grid) ou por um min/max.':
+      'The element ended up {0} instead of {1}: its size is being set by the container (flex/grid) or by a min/max.',
     'Confirmar': 'Confirm',
     'Descartar e abrir': 'Discard and open',
     'As alterações feitas em {0} serão perdidas.': 'The changes made to {0} will be lost.',
@@ -309,6 +313,10 @@ const DICT = {
     'Documento de uma página': 'Documento de una sola página',
     'Copiar': 'Copiar',
     'Copiar HTML para a área de transferência': 'Copiar HTML al portapapeles',
+    '{0} não afeta um elemento inline. Mude o Display para block ou inline-block.':
+      '{0} no afecta a un elemento inline. Cambia el Display a block o inline-block.',
+    'O elemento ficou com {0} em vez de {1}: o tamanho está sendo definido pelo contêiner (flex/grid) ou por um min/max.':
+      'El elemento quedó con {0} en lugar de {1}: el tamaño lo define el contenedor (flex/grid) o un min/max.',
     'Confirmar': 'Confirmar',
     'Descartar e abrir': 'Descartar y abrir',
     'As alterações feitas em {0} serão perdidas.': 'Los cambios hechos en {0} se perderán.',

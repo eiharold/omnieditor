@@ -77,21 +77,68 @@ function declSet(block, prop, value) {
 }
 
 // Escreve um valor de estilo no destino do estado atual (inline ou regra pseudo)
+// Escreve o estilo inline garantindo que ele realmente vença.
+//
+// Uma regra `!important` na CSS da página derrota o estilo inline: o editor
+// gravava o valor, o painel mostrava certo e a tela não mudava — parecia que
+// "nada funciona". Aqui a gente compara o resultado computado com e sem
+// !important: se der diferença, a página estava sobrepondo, e o !important
+// fica. A comparação é feita em valores computados de propósito, porque
+// "#ff0000" e "rgb(255, 0, 0)" são o mesmo valor escrito de formas diferentes.
+function setInline(elm, prop, value) {
+  const read = () => getComputedStyle(elm).getPropertyValue(prop);
+  elm.style.setProperty(prop, value);
+  const normal = read();
+  elm.style.setProperty(prop, value, 'important');
+  if (read() === normal) elm.style.setProperty(prop, value);   // não precisava
+}
+
 function setStyleProp(prop, value) {
   if (!currentEl) return;
   if (currentState === 'normal') {
     if (value === '' || value == null) currentEl.style.removeProperty(prop);
-    else currentEl.style.setProperty(prop, value);
+    else setInline(currentEl, prop, value);
   } else {
     const id = ensureElId();
     writeStateBlock(id, currentState, declSet(stateBlock(id, currentState), prop, value || ''));
   }
 }
 
+// Largura/altura não têm efeito nenhum em elemento `display: inline` (um <a>,
+// um <span>). Sem aviso, parece que o editor está quebrado — avisa e explica.
+const SIZE_PROPS = /^(width|height)$/;
+let sizeWarned = null;
+
+// Um aviso só por elemento+propriedade, senão vira spam a cada tecla digitada.
+function warnOnce(key, msg) {
+  if (sizeWarned === key) return;
+  sizeWarned = key;
+  toast(msg, 'info', 4600);
+}
+
+function warnIfIneffective(prop, value) {
+  if (!SIZE_PROPS.test(prop) || !currentEl) return;
+  const cs = getComputedStyle(currentEl);
+  const key = prop + ':' + (currentEl.id || currentEl.tagName);
+
+  if (cs.display === 'inline') {
+    return warnOnce(key, t('{0} não afeta um elemento inline. Mude o Display para block ou inline-block.', prop));
+  }
+  // Pediu um valor exato em px e o elemento ficou de outro tamanho: quem manda
+  // é o contêiner (item flex/grid) ou um min/max. Sem avisar, parece que o
+  // editor ignorou a edição.
+  const pedido = /^(-?[\d.]+)px$/.exec(value);
+  if (!pedido) return;
+  const real = parseFloat(cs[prop]);
+  if (Number.isNaN(real) || Math.abs(real - parseFloat(pedido[1])) <= 1) return;
+  warnOnce(key, t('O elemento ficou com {0} em vez de {1}: o tamanho está sendo definido pelo contêiner (flex/grid) ou por um min/max.', Math.round(real) + 'px', pedido[0]));
+}
+
 function applyStyle(prop, value, opKey) {
   if (!currentEl) return;
   checkpoint(opKey || 'style:' + currentState + ':' + prop);
   setStyleProp(prop, value);
+  if (value && currentState === 'normal') warnIfIneffective(prop, value);
   markDirty();
   canvas.refreshBoxes();
 }
@@ -310,6 +357,12 @@ function mkToggle({ label, checked, onChange }) {
 // ============================================================
 // Render principal
 // ============================================================
+// Clicar num elemento sempre recomeça no estado Normal. Sem isso, quem
+// experimentava Hover e voltava a editar o mesmo elemento continuava gravando
+// em `:hover` sem perceber — a página não mudava e parecia que o editor
+// tinha parado de funcionar.
+export function resetState() { currentState = 'normal'; }
+
 export function renderInspector(elm) {
   if (elm !== currentEl) currentState = 'normal';  // novo elemento → volta ao normal
   currentEl = elm;
@@ -448,7 +501,9 @@ function renderStyleTab(elm) {
   const tag = elm.tagName;
 
   // --- Seletor de estado (Normal / Hover / Active) ---
-  const stateBar = el('div', { class: 'state-bar' });
+  // fica grudada no topo do painel: em estado não-normal ela precisa continuar
+  // visível mesmo quando o usuário rola até Tipografia ou Dimensões
+  const stateBar = el('div', { class: 'state-bar' + (currentState !== 'normal' ? ' editing-state' : '') });
   stateBar.appendChild(mkBtnGroup({
     label: 'Estado', value: currentState,
     options: [
